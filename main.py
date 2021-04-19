@@ -1,5 +1,6 @@
+import os
+import sys
 import pandas as pd
-import os, sys
 from dateutil.parser import parse
 from dateutil.relativedelta import *
 
@@ -47,7 +48,7 @@ def log_table_format(log_path) -> pd.DataFrame:
 
     for file in files:
         if '.log' in file:
-            with open(os.path.join('resources', file), 'r') as f:
+            with open(os.path.join(log_path, file), 'r') as f:
                 lines = f.read().replace('\n\n', '\n')
                 lines = lines.splitlines()
                 df = pd.DataFrame.from_dict(logs_to_records(lines, struct_header))
@@ -76,7 +77,7 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-    df = log_table_format(os.path.join('resources'))
+    df = log_table_format(os.path.join('data'))
     df = prepare_features(df)
     df.to_excel('output.xlsx', index=False, sheet_name='lavori_macchina', encoding='UTF-8')
     sys.exit(0)

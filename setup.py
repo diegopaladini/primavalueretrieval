@@ -8,6 +8,7 @@ setup(name="prima_value_retriver",
       url='https://gitlab.advancedanalytics.generali.com/aa-generali-italia/portale-liquidatori-iot-microservices.git',
       install_requires=['pyyaml',
                         'python-dateutil==2.8.1',
-                        'pandas==1.2.3'],
+                        'pandas==1.2.3',
+                        'openpyxl==3.0.7'],
       packages=find_packages()
 )

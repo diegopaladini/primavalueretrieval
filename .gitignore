@@ -128,9 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /api.key
-/data/crash_list.json
-/data/crash_details.json
-/data/trip_list.json
 
 secrets/
 
