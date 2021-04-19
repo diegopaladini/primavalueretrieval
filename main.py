@@ -56,6 +56,27 @@ def log_table_format(log_path) -> pd.DataFrame:
     return pd.concat(results)
 
 
+def worktime(end, begin):
+    p = relativedelta(parse(end), parse(begin))
+    return f'0{p.hours}:0{p.minutes}:{p.seconds}'
+
+
+def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
+    df['DataLog'] = df.apply(lambda x: parse(x['Log-Date']).strftime('%Y-%m-%d'), axis=1)
+    df['MeseLog'] = df.apply(lambda x: parse(x['Log-Date']).strftime('%m'), axis=1)
+    df['AnnoLog'] = df.apply(lambda x: parse(x['Log-Date']).strftime('%Y'), axis=1)
+    df['OraLog'] = df.apply(lambda x: parse(x['Log-Date']).strftime('%H'), axis=1)
+    df['GiorniLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).days, axis=1)
+    df['OreLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).hours, axis=1)
+    df['MinutiLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).minutes, axis=1)
+    df['SecondiLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).seconds, axis=1)
+    df['DurataFoglio'] = df.apply(lambda x: worktime(x['End-Time'], x['Begin-Time']), axis=1)
+
+    return df
+
+
 if __name__ == '__main__':
     df = log_table_format(os.path.join('resources'))
+    df = prepare_features(df)
+    df.to_excel('output.xlsx', index=False, sheet_name='lavori_macchina', encoding='UTF-8')
     sys.exit(0)
