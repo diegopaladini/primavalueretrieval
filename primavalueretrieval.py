@@ -1,10 +1,14 @@
 import os
 import sys, getopt
-import logging
+import logging, traceback
 from datetime import date
 import pandas as pd
 from dateutil.parser import parse
 from dateutil.relativedelta import *
+
+logging.basicConfig(filename='parsing.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
+logger=logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 
 def main(argv):
@@ -94,9 +98,12 @@ def parse_single_log(log_path) -> pd.DataFrame:
 
     today = date.today()
     d = today.strftime("%Y-%m-%d")
-    print(f'parsing file {d}_log.log ...')
+    logger.info(f'parsing file {d}_log.log ...')
 
-    results.append(parse_log(log_path, d + "_log.log"))
+    try:
+        results.append(parse_log(log_path, d + "_log.log"))
+    except Exception as e:
+        logger.error(f"Unable to parse parsing file {d}_log.log", e)
 
     return pd.concat(results)
 
@@ -105,10 +112,13 @@ def parse_multiple_logs(log_path) -> pd.DataFrame:
     files = os.listdir(log_path)
 
     results = []
-    for file in files:
-        if '.log' in file:
-            print(f'parsing file {file} ...')
-            results.append(parse_log(log_path, file))
+    try:
+        for file in files:
+            if '.log' in file:
+                logger.info(f'parsing file {file} ...')
+                results.append(parse_log(log_path, file))
+    except Exception as e:
+        logger.error(f"Unable to parse parsing file {file}", e)
 
     return pd.concat(results)
 
@@ -134,4 +144,5 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
+
     main(sys.argv[1:])
