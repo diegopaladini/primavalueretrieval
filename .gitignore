@@ -135,3 +135,7 @@ secrets/
 *.iml
 
 venv*
+
+*.csv
+
+output/
