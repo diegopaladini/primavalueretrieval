@@ -1,8 +1,41 @@
 import os
-import sys
+import sys, getopt
+import logging
 import pandas as pd
 from dateutil.parser import parse
 from dateutil.relativedelta import *
+
+
+def main(argv):
+    inputdir = ''
+    outputdir = ''
+
+    try:
+        opts, args = getopt.getopt(argv, "hi:o:", ["idir=", "odir="])
+    except getopt.GetoptError:
+        print('test.py -i <inputdir> -o <outputdir>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('test.py -i <inputdir> -o <outputdir>')
+            sys.exit()
+        elif opt in ("-i", "--idir"):
+            inputdir = arg
+        elif opt in ("-o", "--odir"):
+            outputdir = arg
+    print('Input dir is "', inputdir)
+    print('Output dir is "', outputdir)
+
+    df = log_table_format(inputdir)
+    df = prepare_features(df)
+    header = False
+
+    if not os.path.isdir(outputdir):
+        os.mkdir(outputdir)
+        header = True
+    df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a', header=header)
+
+    sys.exit(0)
 
 
 def logs_to_records(logs, struct_header):
@@ -70,14 +103,12 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     df['GiorniLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).days, axis=1)
     df['OreLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).hours, axis=1)
     df['MinutiLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).minutes, axis=1)
-    df['SecondiLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).seconds, axis=1)
+    df['SecondiLavoro'] = df.apply(lambda x: relativedelta(parse(x['End-Time']), parse(x['Begin-Time'])).seconds,
+                                   axis=1)
     df['DurataFoglio'] = df.apply(lambda x: worktime(x['End-Time'], x['Begin-Time']), axis=1)
 
     return df
 
 
 if __name__ == '__main__':
-    df = log_table_format(os.path.join('data'))
-    df = prepare_features(df)
-    df.to_excel('output.xlsx', index=False, sheet_name='lavori_macchina', encoding='UTF-8')
-    sys.exit(0)
+    main(sys.argv[1:])

@@ -8,5 +8,5 @@ Prima Value Retrieval
    ```
 2. Aprire il prompt comandi e digitare
     ```
-    python3 main.py [PATH_LOG] [PATH_OUTPUT]
+    python3 primavalueretrieval.py [PATH_LOG] [PATH_OUTPUT]
     ```
