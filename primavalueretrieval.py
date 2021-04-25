@@ -26,10 +26,8 @@ def main(argv):
         elif opt in ("-o", "--odir"):
             outputdir = arg
         elif opt in ("-m", "--mode") and arg in ("d", "daily"):
-            print('log giornaliero')
             df = parse_single_log(inputdir)
         elif opt in ("-m", "--mode") and arg in ("a", "all"):
-            print('log intera cartella')
             df = parse_multiple_logs(inputdir)
 
     df = prepare_features(df)

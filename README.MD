@@ -10,7 +10,9 @@ Prima Value Retrieval
    ```
    pip install -r requirements.txt
    ```
-7. Digitare il seguente comando per avviare lo script
+7. Digitare il seguente comando per avviare lo script scegliendo di elaborare il log giornaliero `daily` o tutti i log
+   nella cartella `all`
    ```
-   python primavalueretrieval.py -i input_dir -o output_dir
+   python primavalueretrieval.py -i input_dir -o output_dir -m daily|all
    ```
+  
