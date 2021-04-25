@@ -12,5 +12,5 @@ Prima Value Retrieval
    ```
 7. Digitare il seguente comando per avviare lo script
    ```
-   python main.py
+   python primavalueretrieval.py -i input_dir -o output_dir
    ```

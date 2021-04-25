@@ -1,6 +1,7 @@
 import os
 import sys, getopt
 import logging
+from datetime import date
 import pandas as pd
 from dateutil.parser import parse
 from dateutil.relativedelta import *
@@ -9,24 +10,28 @@ from dateutil.relativedelta import *
 def main(argv):
     inputdir = ''
     outputdir = ''
+    df = pd.DataFrame()
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["idir=", "odir="])
+        opts, args = getopt.getopt(argv, "hi:o:m:", ["idir=", "odir=", "mode="])
     except getopt.GetoptError:
-        print('test.py -i <inputdir> -o <outputdir>')
+        print('primavalueretrieval.py -i <inputdir> -o <outputdir> -m daily|all')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('test.py -i <inputdir> -o <outputdir>')
+            print('primavalueretrieval.py -i <inputdir> -o <outputdir>')
             sys.exit()
         elif opt in ("-i", "--idir"):
             inputdir = arg
         elif opt in ("-o", "--odir"):
             outputdir = arg
-    print('Input dir is "', inputdir)
-    print('Output dir is "', outputdir)
+        elif opt in ("-m", "--mode") and arg in ("d", "daily"):
+            print('log giornaliero')
+            df = parse_single_log(inputdir)
+        elif opt in ("-m", "--mode") and arg in ("a", "all"):
+            print('log intera cartella')
+            df = parse_multiple_logs(inputdir)
 
-    df = log_table_format(inputdir)
     df = prepare_features(df)
     header = False
 
@@ -46,7 +51,8 @@ def logs_to_records(logs, struct_header):
     return struct_header
 
 
-def log_table_format(log_path) -> pd.DataFrame:
+def parse_log(base_path, inputfile) -> pd.DataFrame:
+
     struct_header = {'Log-Date': [],
                      'File-Name': [],
                      'Page-Total': [],
@@ -76,16 +82,35 @@ def log_table_format(log_path) -> pd.DataFrame:
                      'SP-Length16': [],
                      'SP-Length17': []}
 
-    files = os.listdir(log_path)
+    with open(os.path.join(base_path, inputfile), 'r') as f:
+        lines = f.read().replace('\n\n', '\n')
+        lines = lines.splitlines()
+        df = pd.DataFrame.from_dict(logs_to_records(lines, struct_header))
+
+    return df
+
+
+def parse_single_log(log_path) -> pd.DataFrame:
+
     results = []
 
+    today = date.today()
+    d = today.strftime("%Y-%m-%d")
+    print(f'parsing file {d}_log.log ...')
+
+    results.append(parse_log(log_path, d + "_log.log"))
+
+    return pd.concat(results)
+
+
+def parse_multiple_logs(log_path) -> pd.DataFrame:
+    files = os.listdir(log_path)
+
+    results = []
     for file in files:
         if '.log' in file:
-            with open(os.path.join(log_path, file), 'r') as f:
-                lines = f.read().replace('\n\n', '\n')
-                lines = lines.splitlines()
-                df = pd.DataFrame.from_dict(logs_to_records(lines, struct_header))
-                results.append(df)
+            print(f'parsing file {file} ...')
+            results.append(parse_log(log_path, file))
 
     return pd.concat(results)
 
