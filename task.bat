@@ -1,2 +1,2 @@
-"python.exe" "primavalueretrieval.py" -i C:\Users\paladini\Downloads\primavalueretrieval-master\data -o C:\Users\paladini\Downloads\primavalueretrieval-master\output -m all
-pause
+"python.exe" "C:\Users\paladini\Downloads\primavalueretrieval-master\primavalueretrieval.py" -i C:\Users\paladini\Downloads\primavalueretrieval-master\data -o C:\Users\paladini\Downloads\primavalueretrieval-master\output -m all
+@echo off

@@ -6,7 +6,7 @@ import pandas as pd
 from dateutil.parser import parse
 from dateutil.relativedelta import *
 
-logging.basicConfig(filename=os.path.join(os.getcwd(),'parsing.log'), filemode='a',
+logging.basicConfig(filename=os.path.join(os.path.dirname(__file__),'parsing.log'), filemode='a',
                     format='%(name)s - %(levelname)s - %(message)s')
 logger=logging.getLogger()
 logger.setLevel(logging.DEBUG)

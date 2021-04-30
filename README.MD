@@ -15,4 +15,6 @@ Prima Value Retrieval
    ```
    python primavalueretrieval.py -i input_dir -o output_dir -m daily|all
    ```
+8. Creare un task automatico in windows 10
+   https://www.windowscentral.com/how-create-automated-task-using-task-scheduler-windows-10
   
