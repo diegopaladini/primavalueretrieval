@@ -12,8 +12,14 @@ Prima Value Retrieval
    ```
 7. Digitare il seguente comando per avviare lo script scegliendo di elaborare il log giornaliero `daily` o tutti i log
    nella cartella `all`
+   
+   Lo script si aspetta 3 parametri in ingresso:
+    - log_dir: directory dove si trovano i log
+    - output_dir: directory dove saranno scritti i risultati
+    - modalità: daily (analizza il log giornaliero) oppure all (analizza il contenuto di tutta la directory)
+   
    ```
-   python primavalueretrieval.py -i input_dir -o output_dir -m daily|all
+   python primavalueretrieval.py -i log_dir -o output_dir -m daily|all
    ```
 8. Creare un task automatico in windows 10
    https://www.windowscentral.com/how-create-automated-task-using-task-scheduler-windows-10
