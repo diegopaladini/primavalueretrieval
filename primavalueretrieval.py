@@ -38,7 +38,7 @@ def main(argv):
     df = prepare_features(df)
     header = False
 
-    if not os.path.isdir(outputdir):
+    if not os.path.isfile(os.path.join(outputdir, 'output.csv')):
         os.mkdir(outputdir)
         header = True
     df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a', header=header)
