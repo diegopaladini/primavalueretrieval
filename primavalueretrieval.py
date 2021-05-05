@@ -38,8 +38,12 @@ def main(argv):
     df = prepare_features(df)
     header = False
 
+    # Se il file non esiste crealo ed inserisci l'header
     if not os.path.isfile(os.path.join(outputdir, 'output.csv')):
-        os.mkdir(outputdir)
+        try:
+            os.mkdir(outputdir)
+        except FileExistsError:
+            pass
         header = True
     df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a', header=header)
 
