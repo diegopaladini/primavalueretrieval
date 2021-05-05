@@ -36,7 +36,6 @@ def main(argv):
             df = parse_multiple_logs(inputdir)
 
     df = prepare_features(df)
-    header = False
 
     # Se il file non esiste crealo ed inserisci l'header e scrivi il file per la prima volta
     # altrimenti apri il file vecchio e scrivi solo i record nuovi
@@ -47,7 +46,7 @@ def main(argv):
             pass
         header = True
         df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a',
-                  header=header)
+                  header=True)
 
     else:
         df_master = pd.read_csv(os.path.join(outputdir, "output.csv"), sep=';', encoding='UTF-8')
@@ -55,7 +54,7 @@ def main(argv):
                                                                    ignore_index=True, inplace=False)
         df_master = pd.concat([df_master, df_new_record])
         df_master.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8',
-                  header=False)
+                  header=True)
 
     sys.exit(0)
 
