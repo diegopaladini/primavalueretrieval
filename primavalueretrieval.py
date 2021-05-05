@@ -6,9 +6,9 @@ import pandas as pd
 from dateutil.parser import parse
 from dateutil.relativedelta import *
 
-logging.basicConfig(filename=os.path.join(os.path.dirname(__file__),'parsing.log'), filemode='a',
+logging.basicConfig(filename=os.path.join(os.path.dirname(__file__), 'parsing.log'), filemode='a',
                     format='%(name)s - %(levelname)s - %(message)s')
-logger=logging.getLogger()
+logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
@@ -38,14 +38,24 @@ def main(argv):
     df = prepare_features(df)
     header = False
 
-    # Se il file non esiste crealo ed inserisci l'header
+    # Se il file non esiste crealo ed inserisci l'header e scrivi il file per la prima volta
+    # altrimenti apri il file vecchio e scrivi solo i record nuovi
     if not os.path.isfile(os.path.join(outputdir, 'output.csv')):
         try:
             os.mkdir(outputdir)
         except FileExistsError:
             pass
         header = True
-    df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a', header=header)
+        df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a',
+                  header=header)
+
+    else:
+        df_master = pd.read_csv(os.path.join(outputdir, "output.csv"), sep=';', encoding='UTF-8')
+        df_new_record = pd.concat([df_master, df]).drop_duplicates(keep=False, subset=['Log-Date', 'File-Name'],
+                                                                   ignore_index=True, inplace=False)
+        df_master = pd.concat([df_master, df_new_record])
+        df_master.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8',
+                  header=False)
 
     sys.exit(0)
 
@@ -59,7 +69,6 @@ def logs_to_records(logs, struct_header):
 
 
 def parse_log(base_path, inputfile) -> pd.DataFrame:
-
     struct_header = {'Log-Date': [],
                      'File-Name': [],
                      'Page-Total': [],
@@ -93,12 +102,13 @@ def parse_log(base_path, inputfile) -> pd.DataFrame:
         lines = f.read().replace('\n\n', '\n')
         lines = lines.splitlines()
         df = pd.DataFrame.from_dict(logs_to_records(lines, struct_header))
+        #df['Log-Date-Index'] = df['Log-Date']
+        #df.set_index('Log-Date-Index', inplace=True)
 
     return df
 
 
 def parse_single_log(log_path) -> pd.DataFrame:
-
     results = []
 
     today = date.today()
@@ -134,6 +144,7 @@ def worktime(end, begin):
 
 
 def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
+
     df['DataLog'] = df.apply(lambda x: parse(x['Log-Date']).strftime('%Y-%m-%d'), axis=1)
     df['MeseLog'] = df.apply(lambda x: parse(x['Log-Date']).strftime('%m'), axis=1)
     df['AnnoLog'] = df.apply(lambda x: parse(x['Log-Date']).strftime('%Y'), axis=1)
@@ -149,5 +160,4 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-
     main(sys.argv[1:])
