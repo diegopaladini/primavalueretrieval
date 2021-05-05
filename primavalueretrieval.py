@@ -44,8 +44,7 @@ def main(argv):
             os.mkdir(outputdir)
         except FileExistsError:
             pass
-        df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a',
-                  header=True)
+        df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', header=True)
 
     else:
         df_master = pd.read_csv(os.path.join(outputdir, "output.csv"), sep=';', encoding='UTF-8')
