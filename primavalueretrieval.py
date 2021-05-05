@@ -44,7 +44,6 @@ def main(argv):
             os.mkdir(outputdir)
         except FileExistsError:
             pass
-        header = True
         df.to_csv(os.path.join(outputdir, "output.csv"), sep=';', index=False, encoding='UTF-8', mode='a',
                   header=True)
 
